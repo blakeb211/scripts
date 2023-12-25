@@ -21,6 +21,8 @@ def draw_ascii_histogram(instructions):
     max_count = max(instructions.values())
     histogram_width = 50  # Adjust this value to change the width of the histogram
 
+    # sort histogram descending
+    instructions = dict(sorted(instructions.items(), key=lambda item: item[1]))
     print("ASCII Histogram:")
     for char, count in instructions.items():
         scaled_count = int(count * histogram_width / max_count)

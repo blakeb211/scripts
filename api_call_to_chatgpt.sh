@@ -1,0 +1,1 @@
+OPENAI_API_KEY=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 python test_gpt.py
