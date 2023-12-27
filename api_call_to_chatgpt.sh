@@ -1,1 +1,1 @@
-OPENAI_API_KEY=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 python test_gpt.py
+OPENAI_API_KEY=xxx python test_gpt.py # script with an openai call in it
