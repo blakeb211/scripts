@@ -1,0 +1,77 @@
+# Use a base image
+FROM ubuntu:22.04
+
+# suppress interactive prompts during apt-get
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update package lists
+RUN apt-get update
+
+# Install vim and software-properties-common
+RUN apt-get install -y vim software-properties-common
+
+# Add the ubuntu-toolchain-r/test PPA
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test
+
+# Update package lists again
+RUN apt-get update
+
+# Your additional commands here...
+
+RUN apt -y install gcc-13 g++-13
+
+RUN apt -y install wget
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb
+RUN dpkg -i cuda-keyring_1.1-1_all.deb
+RUN apt-get update
+RUN apt-get -y install cuda-toolkit-12-3
+# Set the path to nvcc
+ENV PATH=/usr/local/cuda-12.3/bin:$PATH
+
+
+RUN apt-get install -y git
+
+RUN apt-get install -y feh
+
+# Setup X11 forwarding
+RUN apt-get install -y x11-apps \
+    xauth \
+    xterm
+
+# Set the display environment variable
+ENV DISPLAY=:0
+
+RUN  add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y python3.10 python3.10-venv python3.10-tk
+RUN apt-get install -y python3-pip
+
+RUN pip3 install matplotlib
+RUN pip3 install pandas
+
+# More C++ Libs Beyond Cuda
+RUN apt-get install -y libboost1.74-all-dev
+RUN apt-get install -y cmake
+#                       libgflags-dev \
+#                       libevent-dev \
+#                       libdouble-conversion-dev \
+#                       libgoogle-glog-dev \
+#                       libgflags-dev \
+#                       libiberty-dev
+
+# Verify installations
+RUN gcc --version && \
+    g++ --version && \
+    python3.10 --version && \
+    nvcc --version && \
+    cmake --version
+
+# Set the default command to run when the container starts
+CMD ["bash"]
+WORKDIR /home
+
+# Set alternatives to make GCC-13 the default
+# RUN update-alternatives --remove-all gcc
+# RUN update-alternatives --remove-all g++
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100
+RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
